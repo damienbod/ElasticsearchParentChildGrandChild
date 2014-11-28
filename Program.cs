@@ -1,7 +1,7 @@
 ﻿using System;
 using ConsoleElasticsearchParentChildGrandChild.Model;
 using ElasticsearchCRUD;
-using ElasticsearchCRUD.ContextAddDeleteUpdate;
+using ElasticsearchCRUD.ContextAddDeleteUpdate.IndexModel;
 using ElasticsearchCRUD.Tracing;
 using ElasticsearchCRUD.Utils;
 
@@ -16,7 +16,7 @@ namespace ConsoleElasticsearchParentChildGrandChild
 		private static readonly ElasticsearchSerializerConfiguration Config = new ElasticsearchSerializerConfiguration(ElasticsearchMappingResolver, SaveChildObjectsAsWellAsParent,
 				ProcessChildDocumentsAsSeparateChildIndex, UserDefinedRouting);
 
-		private const string ConnectionString = "http://localhost.fiddler:9200";
+		private const string ConnectionString = "http://localhost:9200";
 
 		static void Main(string[] args)
 		{
@@ -60,7 +60,7 @@ namespace ConsoleElasticsearchParentChildGrandChild
 			
 				// Create index in Elasticsearch
 				// This creates a index leagues and 3 types, leaguecup, team, player
-				var ret = context.CreateIndex<LeagueCup>();
+				var ret = context.IndexCreate<LeagueCup>();
 			}
 		}
 

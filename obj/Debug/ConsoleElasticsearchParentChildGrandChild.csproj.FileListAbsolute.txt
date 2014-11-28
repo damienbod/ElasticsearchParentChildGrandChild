@@ -1,0 +1,9 @@
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\ConsoleElasticsearchParentChildGrandChild.exe.config
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\ConsoleElasticsearchParentChildGrandChild.exe
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\ConsoleElasticsearchParentChildGrandChild.pdb
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\ElasticsearchCRUD.dll
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\Newtonsoft.Json.dll
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\ElasticsearchCRUD.xml
+C:\git\damienbod\ElasticsearchParentChildGrandChild\bin\Debug\Newtonsoft.Json.xml
+C:\git\damienbod\ElasticsearchParentChildGrandChild\obj\Debug\ConsoleElasticsearchParentChildGrandChild.exe
+C:\git\damienbod\ElasticsearchParentChildGrandChild\obj\Debug\ConsoleElasticsearchParentChildGrandChild.pdb
