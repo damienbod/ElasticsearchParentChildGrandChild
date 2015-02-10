@@ -19,7 +19,7 @@ namespace ConsoleElasticsearchParentChildGrandChild
 		private static readonly ElasticsearchSerializerConfiguration Config = new ElasticsearchSerializerConfiguration(ElasticsearchMappingResolver, SaveChildObjectsAsWellAsParent,
 				ProcessChildDocumentsAsSeparateChildIndex, UserDefinedRouting);
 
-		private const string ConnectionString = "http://localhost.fiddler:9200";
+		private const string ConnectionString = "http://localhost:9200";
 
 		private static void Main(string[] args)
 		{
