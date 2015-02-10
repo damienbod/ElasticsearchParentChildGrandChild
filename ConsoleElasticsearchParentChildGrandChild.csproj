@@ -32,9 +32,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ElasticsearchCRUD, Version=1.0.27.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="ElasticsearchCRUD, Version=1.0.28.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>packages\ElasticsearchCRUD.1.0.27\lib\net45\ElasticsearchCRUD.dll</HintPath>
+      <HintPath>packages\ElasticsearchCRUD.1.0.28\lib\net45\ElasticsearchCRUD.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -50,6 +50,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="GlobalLeaguesElasticsearchMapping.cs" />
+    <Compile Include="GlobalSearch.cs" />
+    <Compile Include="Model\LeagueCup.cs" />
+    <Compile Include="Model\Player.cs" />
     <Compile Include="Model\Team.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

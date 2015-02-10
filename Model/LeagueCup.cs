@@ -1,14 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace ConsoleElasticsearchParentChildGrandChild.Model
 {
-	public class Team
+	public class LeagueCup
 	{
-		[Key]
 		public long Id { get; set; }
 		public string Name { get; set; }
-		public string Stadium { get; set; }
-		public List<Player> Players { get; set; }
+		public string Description { get; set; }
+		public List<Team> Teams { get; set; }
 	}
 }

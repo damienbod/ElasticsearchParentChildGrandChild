@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
 using ConsoleElasticsearchParentChildGrandChild.Model;
 using ElasticsearchCRUD;
 using ElasticsearchCRUD.ContextAddDeleteUpdate.IndexModel;
+using ElasticsearchCRUD.ContextSearch.SearchModel;
+using ElasticsearchCRUD.Model.SearchModel;
+using ElasticsearchCRUD.Model.SearchModel.Filters;
 using ElasticsearchCRUD.Tracing;
 using ElasticsearchCRUD.Utils;
 
@@ -18,12 +23,17 @@ namespace ConsoleElasticsearchParentChildGrandChild
 
 		private const string ConnectionString = "http://localhost:9200";
 
-		static void Main(string[] args)
+		private static void Main(string[] args)
 		{
 			// Define the mapping for the type so that all use the same index as the parent
-			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof(LeagueCup), MappingUtils.GetElasticsearchMapping("leagues"));
-			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof(Team), MappingUtils.GetElasticsearchMapping("leagues"));
-			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof(Player), MappingUtils.GetElasticsearchMapping("leagues"));
+			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof (LeagueCup),
+				MappingUtils.GetElasticsearchMapping("leagues"));
+			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof (Team),
+				MappingUtils.GetElasticsearchMapping("leagues"));
+			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof (Player),
+				MappingUtils.GetElasticsearchMapping("leagues"));
+			ElasticsearchMappingResolver.AddElasticSearchMappingForEntityType(typeof (object),
+				new GlobalLeaguesElasticsearchMapping());
 
 			CreateIndexWithRouting();
 			Console.ReadLine();
@@ -40,6 +50,16 @@ namespace ConsoleElasticsearchParentChildGrandChild
 			var player = GetPlayer(3, leagueAndRoutingId, teamId);
 			Console.WriteLine("Found player: " + player.Name);
 			Console.ReadLine();
+
+			GetAllForRoute(leagueAndRoutingId);
+			Console.ReadLine();
+
+			GetAllForRouteFilterForPlayersAndTeams(leagueAndRoutingId);
+			Console.ReadLine();
+
+			var globalSearch = new GlobalSearch(ConnectionString);
+			globalSearch.RunGlobalSearch();
+			Console.ReadLine();	
 		}
 
 		private static void CreateIndexWithRouting()
@@ -119,6 +139,63 @@ namespace ConsoleElasticsearchParentChildGrandChild
 			}
 
 			return player;
+		}
+
+		/// <summary>
+		/// search for all documents of any type in the leagues index
+		/// </summary>
+		/// <param name="leagueId">Requires the route for the explicit league</param>
+		private static void GetAllForRoute(long leagueId)
+		{
+			using (var context = new ElasticsearchContext(ConnectionString, Config))
+			{
+				context.TraceProvider = new ConsoleTraceProvider();
+				var result = context.Search<object>(new Search(), 
+					new SearchUrlParameters
+					{
+						Routing = leagueId.ToString(CultureInfo.InvariantCulture)
+					});
+
+				Console.WriteLine("Found {0}, Expected 3", result.PayloadResult.Hits.Total);
+			}
+		}
+
+		/// <summary>
+		/// Get all the teams and the player documents
+		/// </summary>
+		/// <param name="leagueId">Requires the route for the explicit league</param>
+		private static void GetAllForRouteFilterForPlayersAndTeams(long leagueId)
+		{
+			var search = new Search
+			{
+				Filter = new Filter(
+					new IndicesFilter(
+						new List<string> {"leagues"},
+						new OrFilter(
+							new List<IFilter>
+							{
+								new TypeFilter("team"),
+								new TypeFilter("player")
+							}
+						)
+					)
+					{
+						NoMatchFilter = new TypeFilter("leaguecup")
+					}
+				)
+			};
+
+			using (var context = new ElasticsearchContext(ConnectionString, Config))
+			{
+				context.TraceProvider = new ConsoleTraceProvider();
+				var result = context.Search<object>(search,
+					new SearchUrlParameters
+					{
+						Routing = leagueId.ToString(CultureInfo.InvariantCulture)
+					});
+
+				Console.WriteLine("Found {0}, Expected 2", result.PayloadResult.Hits.Total);
+			}
 		}
 	}
 }
