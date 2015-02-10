@@ -1,12 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Globalization;
 using ConsoleElasticsearchParentChildGrandChild.Model;
 using ElasticsearchCRUD;
 using ElasticsearchCRUD.ContextAddDeleteUpdate.IndexModel;
 using ElasticsearchCRUD.ContextSearch.SearchModel;
 using ElasticsearchCRUD.Model.SearchModel;
-using ElasticsearchCRUD.Model.SearchModel.Filters;
 using ElasticsearchCRUD.Tracing;
 using ElasticsearchCRUD.Utils;
 
@@ -21,7 +19,7 @@ namespace ConsoleElasticsearchParentChildGrandChild
 		private static readonly ElasticsearchSerializerConfiguration Config = new ElasticsearchSerializerConfiguration(ElasticsearchMappingResolver, SaveChildObjectsAsWellAsParent,
 				ProcessChildDocumentsAsSeparateChildIndex, UserDefinedRouting);
 
-		private const string ConnectionString = "http://localhost:9200";
+		private const string ConnectionString = "http://localhost.fiddler:9200";
 
 		private static void Main(string[] args)
 		{
@@ -54,10 +52,11 @@ namespace ConsoleElasticsearchParentChildGrandChild
 			GetAllForRoute(leagueAndRoutingId);
 			Console.ReadLine();
 
-			GetAllForRouteFilterForPlayersAndTeams(leagueAndRoutingId);
+			var globalSearch = new GlobalSearch(ConnectionString);
+
+			globalSearch.GetAllForRouteFilterForPlayersAndTeams(leagueAndRoutingId);
 			Console.ReadLine();
 
-			var globalSearch = new GlobalSearch(ConnectionString);
 			globalSearch.RunGlobalSearch();
 			Console.ReadLine();	
 		}
@@ -160,42 +159,5 @@ namespace ConsoleElasticsearchParentChildGrandChild
 			}
 		}
 
-		/// <summary>
-		/// Get all the teams and the player documents
-		/// </summary>
-		/// <param name="leagueId">Requires the route for the explicit league</param>
-		private static void GetAllForRouteFilterForPlayersAndTeams(long leagueId)
-		{
-			var search = new Search
-			{
-				Filter = new Filter(
-					new IndicesFilter(
-						new List<string> {"leagues"},
-						new OrFilter(
-							new List<IFilter>
-							{
-								new TypeFilter("team"),
-								new TypeFilter("player")
-							}
-						)
-					)
-					{
-						NoMatchFilter = new TypeFilter("leaguecup")
-					}
-				)
-			};
-
-			using (var context = new ElasticsearchContext(ConnectionString, Config))
-			{
-				context.TraceProvider = new ConsoleTraceProvider();
-				var result = context.Search<object>(search,
-					new SearchUrlParameters
-					{
-						Routing = leagueId.ToString(CultureInfo.InvariantCulture)
-					});
-
-				Console.WriteLine("Found {0}, Expected 2", result.PayloadResult.Hits.Total);
-			}
-		}
 	}
 }
